@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8" />
+    <title>Matrix-chain Multiplication Calculator</title>
+    <style>
+
+        * {
+            font-family: Arial, Helvetica, sans-serif;
+            font-size: 16px;
+        }
+
+        body {
+            background-color: #F0EFEB;
+        }
+
+        html, body, #input-form, #heading {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        #input-form, table, #heading {
+            margin: 10px;
+            border: 1px solid black;
+            min-width: 600px;
+            background-color: #D4D4D4; 
+        }
+
+        table, tr {
+            margin: 1px;
+        }
+
+        td {
+            min-width: 280px;
+        }
+
+    </style>
+</head>
+<body>
+    <div id="heading">
+        <h1>Matrix-chain Multiplication Calculator</h1>
+    </div>
+
+    <form id="input-form">
+        <div>
+            <label for="dimensions">Matrix dimensions:</label>
+            <input type="text" id="dimensions" name="dimensions" value="[30, 35, 15, 5, 10, 20, 25]"><br><br> 
+        </div>
+        <div>
+            <button type="submit">Calculate</button>
+            <button type="reset">Reset</button>
+        </div>
+    </form>
+
+    <table>
+        <tr>
+            <td>Minimum number of multiplications is: </td>
+            <td id="num-multiplications"></td>
+        </tr>
+    </table>
+
+    <table>
+        <tr>
+            <td>The optimal parenthesization is: </td>
+            <td id="optimal-paranthization"></td>
+        </tr>
+    </table>
+    
+    
+    <script>
+
+        const numMultiplications = document.getElementById("num-multiplications");
+        const optimalParanthization = document.getElementById("optimal-paranthization");
+
+        document.getElementById("input-form").addEventListener("submit", function(event) {
+            event.preventDefault(); // Prevent the form from submitting normally
+            
+            const dimensionsInput = document.getElementById("dimensions").value;
+            const inputString  = document.getElementById("input-string");
+            const d = JSON.parse(dimensionsInput);
+            const { m, s } = matrixChainOrder(d);
+
+            numMultiplications.textContent = `${m[0][d.length - 2]}`
+            optimalParanthization.textContent = `${findOptimalParens(s, 0, d.length - 2)}`
+        })
+
+        document.getElementById("input-form").addEventListener("reset", function(event) {
+            numMultiplications.textContent = ``;
+            optimalParanthization.textContent = ``;
+        })
+
+        // p = matrix dimensions => matrix i is p[i-1] x p[i]
+        function matrixChainOrder(d) {
+            const n = d.length - 1;
+            const m = Array.from({ length: n }, () => Array.from({length: n}, () => 0));
+            const s = Array.from({ length: n }, () => Array.from({length: n}, () => 0));
+
+              // l = chain length.
+            for (let l = 2; l <= n; l++) {
+                for (let i = 0; i <= n - l; i++) {
+                    const j = i + l - 1;
+                    m[i][j] = 'Infinity';
+                    for (let k = i; k < j; k++) {
+                        // Formula: c[i, j] = min(c[i, k] + c[k+1, j] + d(i-1) * d(k) * d(j))
+                        const q = m[i][k] + m[k + 1][j] + d[i] * d[k + 1] * d[j + 1];
+                        if (q < m[i][j]) {
+                        m[i][j] = q;
+                        s[i][j] = k;
+                        }
+                    }
+                }
+            }
+
+            return { m, s };
+        }
+
+        function findOptimalParens(s, i, j) {
+            if (i === j) {
+                return `A[${i}]`;
+            } else {
+                return `(${findOptimalParens(s, i, s[i][j])}${findOptimalParens(s, s[i][j] + 1, j)})`;
+            }
+        }
+
+    </script>
+</body>
+</html>
