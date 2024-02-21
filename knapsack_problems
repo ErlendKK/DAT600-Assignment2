@@ -1,0 +1,85 @@
+import random
+import numpy as np
+
+# Input example
+items = [
+    {'ID': 1, 'weight': 2, 'value': 3}, 
+    {'ID': 2, 'weight': 3, 'value': 4}, 
+    {'ID': 3, 'weight': 4, 'value': 5}, 
+    {'ID': 4, 'weight': 5, 'value': 8}, 
+    {'ID': 5, 'weight': 9, 'value': 10}
+]
+
+max_capacity = 10
+
+# Generates an instance of the knapsack problem
+def generate_knapsack_problem(items, max_capacity, num_items=None):
+    if num_items is None:
+        num_items = random.randint(2, len(items))
+    selected_items = random.sample(items, k=num_items)
+    return selected_items, max_capacity
+
+# Solves the knapsack_0_1 problem
+def knapsack_0_1(items, max_capacity):
+    n = len(items)
+    dp = np.zeros((n + 1, max_capacity + 1))
+    selected_items = []
+    w = max_capacity
+    
+    for i in range(1, n + 1):
+        for w in range(1, max_capacity + 1):
+            item = items[i-1]
+            weight, value = item['weight'], item['value']
+            if weight <= w:
+                dp[i][w] = max(dp[i-1][w], dp[i-1][w-weight] + value)
+            else:
+                dp[i][w] = dp[i-1][w]
+      
+    for i in range(n, 0, -1):
+        if dp[i][w] != dp[i-1][w]:
+            selected_items.append(items[i-1])
+            w -= items[i-1]['weight']
+    
+    # selected_items.reverse()
+    return dp[n][max_capacity], selected_items
+
+# Solves the knapsack_fractional problem
+def knapsack_fractional(items, max_capacity):
+    for item in items:
+        item['value_density'] = item['value'] / item['weight']
+        item['fraction'] = None
+
+    items = sorted(items, key=lambda item: item['value_density'], reverse=True)
+    total_value = 0
+    selected_items = []
+
+    for item in items:
+
+        if max_capacity > item['weight']:
+            item['fraction'] = 1
+            max_capacity -= item['weight']
+            total_value += item['value']
+            selected_items.append(item)
+
+        else:
+            item['fraction'] = max_capacity / item['weight']
+            total_value += item['value'] * item['fraction']
+            selected_items.append(item)
+            break
+
+    return total_value, selected_items
+
+
+
+# Prints solutions
+problem_items, problem_capacity = generate_knapsack_problem(items, max_capacity)
+print("Generated Knapsack Problem Items (weight, value):", problem_items)
+print("Knapsack Capacity:", problem_capacity, "\n")
+
+optimal_value_01, selected_items_01 = knapsack_0_1(problem_items, problem_capacity)
+print("0-1 Knapsack\nOptimal Value:", optimal_value_01)
+print("Items to Include (ID, weight, value):", [(item['ID'],item['weight'], item['value']) for item in selected_items_01], "\n")
+
+optimal_value_frac, selected_items_frac = knapsack_fractional(problem_items, problem_capacity)
+print("Fractional Knapsack\nOptimal Value:", optimal_value_frac)
+print("Items to Include (ID, weight, value, fraction):", [(item['ID'], item['weight'], item['value'], item['fraction']) for item in selected_items_frac], "\n")
