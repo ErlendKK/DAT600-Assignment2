@@ -8,6 +8,7 @@
         * {
             font-family: Arial, Helvetica, sans-serif;
             font-size: 16px;
+            border-radius: 5px;
         }
 
         body {
@@ -22,7 +23,7 @@
         }
 
         #input-form, table, #heading {
-            margin: 10px;
+            margin: 8px;
             border: 1px solid black;
             min-width: 600px;
             background-color: #D4D4D4; 
@@ -36,6 +37,15 @@
             min-width: 280px;
         }
 
+        button {
+            margin-bottom: 4px;
+        }
+
+        input {
+            margin-top: 4px;
+            border-radius: 3px;
+        }
+
     </style>
 </head>
 <body>
@@ -45,7 +55,7 @@
 
     <form id="input-form">
         <div>
-            <label for="dimensions">Matrix dimensions:</label>
+            <label for="dimensions">Matrix dimensions (p-vector):</label>
             <input type="text" id="dimensions" name="dimensions" value="[30, 35, 15, 5, 10, 20, 25]"><br><br> 
         </div>
         <div>
@@ -56,14 +66,14 @@
 
     <table>
         <tr>
-            <td>Minimum number of multiplications is: </td>
+            <td>Minimum number of multiplications: </td>
             <td id="num-multiplications"></td>
         </tr>
     </table>
 
     <table>
         <tr>
-            <td>The optimal parenthesization is: </td>
+            <td>Optimal parenthesization: </td>
             <td id="optimal-paranthization"></td>
         </tr>
     </table>
@@ -73,20 +83,32 @@
 
         const numMultiplications = document.getElementById("num-multiplications");
         const optimalParanthization = document.getElementById("optimal-paranthization");
+        const inputForm = document.getElementById("input-form");
 
-        document.getElementById("input-form").addEventListener("submit", function(event) {
+        inputForm.addEventListener("submit", function(event) {
             event.preventDefault(); // Prevent the form from submitting normally
             
             const dimensionsInput = document.getElementById("dimensions").value;
             const inputString  = document.getElementById("input-string");
-            const d = JSON.parse(dimensionsInput);
-            const { m, s } = matrixChainOrder(d);
 
-            numMultiplications.textContent = `${m[0][d.length - 2]}`
-            optimalParanthization.textContent = `${findOptimalParens(s, 0, d.length - 2)}`
+            try {
+                const d = JSON.parse(dimensionsInput);
+                // const isAllNumeric = d.every(item => typeof item === 'number' && !isNaN(item));
+                // !isAllNumeric && displayInvalidInput();
+                const { m, s } = matrixChainOrder(d);
+                numMultiplications.textContent = `${m[0][d.length - 2]}`
+                optimalParanthization.textContent = `${findOptimalParens(s, 0, d.length - 2)}`
+            } catch(error) {
+                displayInvalidInput();
+            }
         })
 
-        document.getElementById("input-form").addEventListener("reset", function(event) {
+        function displayInvalidInput() {
+            numMultiplications.textContent = `Invalid input`
+            optimalParanthization.textContent = `Please enter a valid array of integers`
+        }
+
+        inputForm.addEventListener("reset", function(event) {
             numMultiplications.textContent = ``;
             optimalParanthization.textContent = ``;
         })
