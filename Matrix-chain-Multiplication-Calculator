@@ -8,11 +8,11 @@
         * {
             font-family: Arial, Helvetica, sans-serif;
             font-size: 16px;
-            border-radius: 5px;
+            border-radius: 6px;
         }
 
         body {
-            background-color: #F0EFEB;
+            background-color: #FFFFFF
         }
 
         html, body, #input-form, #heading {
@@ -24,9 +24,9 @@
 
         #input-form, table, #heading {
             margin: 8px;
-            border: 1px solid black;
+            border: 1px solid #e5bb89;
             min-width: 600px;
-            background-color: #D4D4D4; 
+            background-color: #CCC5B7;
         }
 
         table, tr {
@@ -39,6 +39,7 @@
 
         button {
             margin-bottom: 4px;
+            background-color: #e5bb89
         }
 
         input {
