@@ -8,29 +8,44 @@
         * {
             font-family: Arial, Helvetica, sans-serif;
             font-size: 16px;
-            border-radius: 10px;
+            border-radius: 5px;
         }
 
-        html, body, #input-form, #heading {
+        html, body, #input-form, #app, #heading {
             display: flex;
             flex-direction: column;
             align-items: center;
-            justify-content: center;
+            /* justify-content: center; */
         }
 
-        #input-form, table, #heading {
-            margin: 8px;
+        #app {
+            min-width: 630px;
+            border: 2px solid #6898c8;
+            min-height: 220px;
+        }
+
+        #heading {
+            justify-self: start;
+            width: 630px;
+            background-color: #6898c8;
+            border-radius: 0px;
+        }
+
+        #input-form, table {
+            margin-top: 8px;
             border: 1px solid black;
-            min-width: 600px;
+            width: 600px;
             background-color: #f1f5f9;
         }
 
         table, tr {
-            margin: 2px;
-        }
+            margin-top: 5px;
+            height: 10px;
+        } 
 
         td {
             min-width: 280px;
+            height: 30px;
         }
 
         button {
@@ -46,34 +61,36 @@
     </style>
 </head>
 <body>
-    <div id="heading">
-        <h1>Matrix-chain Multiplication Calculator</h1>
+    <div id="app">
+        <div id="heading">
+            <h1>Matrix-chain Multiplication Calculator</h1>
+        </div>
+
+        <form id="input-form">
+            <div>
+                <label for="dimensions">Matrix dimensions (p-vector):</label>
+                <input type="text" id="dimensions" name="dimensions" value="[30, 35, 15, 5, 10, 20, 25]"><br><br> 
+            </div>
+            <div>
+                <button type="submit">Calculate</button>
+                <button type="reset">Reset</button>
+            </div>
+        </form>
+
+        <table>
+            <tr>
+                <td>Minimum number of multiplications: </td>
+                <td id="num-multiplications"></td>
+            </tr>
+        </table>
+
+        <table>
+            <tr>
+                <td>Optimal parenthesization: </td>
+                <td id="optimal-paranthization"></td>
+            </tr>
+        </table>
     </div>
-
-    <form id="input-form">
-        <div>
-            <label for="dimensions">Matrix dimensions (p-vector):</label>
-            <input type="text" id="dimensions" name="dimensions" value="[30, 35, 15, 5, 10, 20, 25]"><br><br> 
-        </div>
-        <div>
-            <button type="submit">Calculate</button>
-            <button type="reset">Reset</button>
-        </div>
-    </form>
-
-    <table>
-        <tr>
-            <td>Minimum number of multiplications: </td>
-            <td id="num-multiplications"></td>
-        </tr>
-    </table>
-
-    <table>
-        <tr>
-            <td>Optimal parenthesization: </td>
-            <td id="optimal-paranthization"></td>
-        </tr>
-    </table>
     
     
     <script>
